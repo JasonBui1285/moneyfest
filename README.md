@@ -20,21 +20,13 @@ http://localhost:3000
 
 ## Database
 
-Local dev đang dùng SQLite để dễ chạy ngay:
+MONEYFEST hiện dùng PostgreSQL-compatible database qua Prisma. Production khuyến nghị dùng Neon PostgreSQL trên Netlify.
 
 ```env
-DATABASE_URL="file:./prisma/dev.db"
+DATABASE_URL="postgresql://USER:PASSWORD@HOST.neon.tech/DB?sslmode=require"
 ```
 
-Production nên dùng PostgreSQL qua Supabase, Neon hoặc provider tương thích Prisma. Khi deploy production, thiết lập `DATABASE_URL` trong dashboard hosting/secrets. Không hard-code database URL trong source code.
-
-Gợi ý production:
-
-```env
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?schema=public"
-```
-
-Lưu ý: Prisma schema hiện đang cấu hình cho SQLite dev mode. Khi chuyển hẳn sang PostgreSQL production, cần cập nhật datasource/provider và chạy migration theo môi trường production.
+Khi chạy local, tạo database PostgreSQL/Neon hoặc dùng một PostgreSQL local, sau đó đặt `DATABASE_URL` trong `.env`. Không hard-code database URL trong source code.
 
 ## Admin
 
