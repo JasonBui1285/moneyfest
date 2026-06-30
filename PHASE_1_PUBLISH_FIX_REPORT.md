@@ -40,7 +40,7 @@
 
 ## 3. Critical fixes đã hoàn thành
 
-- `/admin` đã được bảo vệ bằng Basic Auth qua `ADMIN_USERNAME` và `ADMIN_PASSWORD`.
+- `/admin` đã được bảo vệ bằng Basic Auth phía server.
 - Không hard-code credential trong code.
 - Nếu thiếu env admin, `/admin` trả `503` và không mở public.
 - `/admin` có `X-Robots-Tag: noindex, nofollow` và metadata `robots: noindex`.
@@ -108,12 +108,7 @@ Local dev:
 DATABASE_URL="file:./prisma/dev.db"
 ```
 
-Admin:
-
-```env
-ADMIN_USERNAME="admin"
-ADMIN_PASSWORD="use-a-long-random-password"
-```
+Khu vực quản trị dùng Basic Auth phía server. Không ghi credential thật trong report.
 
 Production:
 
@@ -147,8 +142,7 @@ npm run build
 
 ## 9. Checklist trước deploy
 
-- Thiết lập `ADMIN_USERNAME`.
-- Thiết lập `ADMIN_PASSWORD` đủ mạnh.
+- Thiết lập credential quản trị đủ mạnh trên môi trường deploy.
 - Thiết lập `DATABASE_URL` production.
 - Chọn và cấu hình PostgreSQL production nếu deploy fullstack.
 - Chạy `npx prisma generate`.

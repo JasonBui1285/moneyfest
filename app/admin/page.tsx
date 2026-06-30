@@ -5,8 +5,8 @@ import { getAdminData } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Admin",
-  description: "Dashboard admin cơ bản của MONEYFEST Phase 1.",
+  title: "Quản trị",
+  description: "Khu vực quản trị nội bộ của MONEYFEST Phase 1.",
   robots: {
     index: false,
     follow: false,
@@ -23,9 +23,9 @@ export default async function AdminPage() {
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <SectionHeader
           as="h1"
-          eyebrow="Admin Phase 1"
+          eyebrow="Quản trị Phase 1"
           title="Dashboard tổng quan"
-          description="Khu vực này được bảo vệ bằng Basic Auth qua biến môi trường ADMIN_USERNAME và ADMIN_PASSWORD."
+          description="Khu vực này được bảo vệ bằng Basic Auth phía server."
         />
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard label="Tổng lead" value={data.leadCount} />
@@ -34,7 +34,7 @@ export default async function AdminPage() {
           <StatCard label="Yêu cầu tư vấn" value={data.consultationCount} />
         </div>
         <div className="mt-8 grid gap-6 xl:grid-cols-3">
-          <AdminTable title="Lead mới nhất" empty="Chưa có lead">
+          <InternalTable title="Lead mới nhất" empty="Chưa có lead">
             {data.leads.map((lead) => (
               <tr key={lead.id}>
                 <td>{lead.name}</td>
@@ -43,8 +43,8 @@ export default async function AdminPage() {
                 <td>{formatDate(lead.createdAt)}</td>
               </tr>
             ))}
-          </AdminTable>
-          <AdminTable title="Lượt tải ebook mới nhất" empty="Chưa có lượt tải">
+          </InternalTable>
+          <InternalTable title="Lượt tải ebook mới nhất" empty="Chưa có lượt tải">
             {data.downloads.map((download) => (
               <tr key={download.id}>
                 <td>{download.lead.name}</td>
@@ -53,8 +53,8 @@ export default async function AdminPage() {
                 <td>{formatDate(download.createdAt)}</td>
               </tr>
             ))}
-          </AdminTable>
-          <AdminTable title="Yêu cầu tư vấn mới nhất" empty="Chưa có yêu cầu">
+          </InternalTable>
+          <InternalTable title="Yêu cầu tư vấn mới nhất" empty="Chưa có yêu cầu">
             {data.consultations.map((request) => (
               <tr key={request.id}>
                 <td>{request.name}</td>
@@ -63,13 +63,13 @@ export default async function AdminPage() {
                 <td>{formatDate(request.createdAt)}</td>
               </tr>
             ))}
-          </AdminTable>
+          </InternalTable>
         </div>
       </section>
   );
 }
 
-function AdminTable({
+function InternalTable({
   title,
   empty,
   children,

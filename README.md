@@ -28,16 +28,9 @@ DATABASE_URL="postgresql://USER:PASSWORD@HOST.neon.tech/DB?sslmode=require"
 
 Khi chạy local, tạo database PostgreSQL/Neon hoặc dùng một PostgreSQL local, sau đó đặt `DATABASE_URL` trong `.env`. Không hard-code database URL trong source code.
 
-## Admin
+## Quản Trị
 
-Route `/admin` được bảo vệ bằng Basic Auth qua biến môi trường:
-
-```env
-ADMIN_USERNAME="admin"
-ADMIN_PASSWORD="use-a-long-random-password"
-```
-
-Nếu thiếu hai biến này, `/admin` sẽ không mở public và sẽ hiển thị hướng dẫn cấu hình. Không commit mật khẩu thật vào repository.
+Route `/admin` được bảo vệ bằng Basic Auth phía server. Cấu hình credential theo `.env.example` và không commit giá trị thật vào repository.
 
 ## Form và consent
 

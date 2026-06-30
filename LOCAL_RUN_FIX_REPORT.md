@@ -63,14 +63,13 @@ Local `.env` hiện cần:
 
 ```env
 DATABASE_URL="file:./prisma/dev.db"
-ADMIN_USERNAME="admin"
-ADMIN_PASSWORD="change-me-local"
+Credential quản trị local được đặt trong `.env` và không ghi lại trong report.
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 ```
 
 Ghi chú:
 
-- Không dùng `change-me-local` cho production.
+- Không dùng credential local cho production.
 - Production cần đặt secret thật trong hosting provider.
 
 ## 6. Checklist xác nhận các page đã chạy
@@ -89,7 +88,7 @@ Ghi chú:
   - `/services`: `200`
   - `/contact`: `200`
 - `/admin` không auth: `401`, có Basic Auth challenge.
-- `/admin` có auth local `admin:change-me-local`: `200`.
+- `/admin` có auth local `local credentials`: `200`.
 - In-app browser tab mới truy cập `http://localhost:3000/blog`: pass.
 - Browser không còn `ERR_CONNECTION_REFUSED`.
 - Browser console error: `0`.

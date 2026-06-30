@@ -9,11 +9,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-3">
             <Emblem className="h-10 w-10" />
             <div>
-              <p className="mf-eyebrow">MONEYFEST Admin</p>
+              <p className="mf-eyebrow">MONEYFEST nội bộ</p>
               <p className="text-sm text-[rgba(244,240,232,0.72)]">Khu vực vận hành nội bộ</p>
             </div>
           </div>
-          <nav className="flex flex-wrap gap-3 text-sm font-bold" aria-label="Admin navigation">
+          <nav className="flex flex-wrap gap-3 text-sm font-bold" aria-label="Điều hướng quản trị">
             <Link href="/admin" className="text-[var(--mf-champagne)] hover:text-[var(--mf-gold)]">Dashboard</Link>
             <Link href="/" className="text-[rgba(244,240,232,0.72)] hover:text-[var(--mf-champagne)]">Xem website</Link>
           </nav>

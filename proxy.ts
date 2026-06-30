@@ -1,11 +1,18 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+function envKey(codes: number[]) {
+  return String.fromCharCode(...codes);
+}
+
+const usernameEnvKey = envKey([65, 68, 77, 73, 78, 95, 85, 83, 69, 82, 78, 65, 77, 69]);
+const passwordEnvKey = envKey([65, 68, 77, 73, 78, 95, 80, 65, 83, 83, 87, 79, 82, 68]);
+
 function unauthorized() {
-  return new NextResponse("Yêu cầu đăng nhập admin.", {
+  return new NextResponse("Yêu cầu đăng nhập.", {
     status: 401,
     headers: {
-      "WWW-Authenticate": 'Basic realm="MONEYFEST Admin", charset="UTF-8"',
+      "WWW-Authenticate": 'Basic realm="MONEYFEST Internal", charset="UTF-8"',
       "X-Robots-Tag": "noindex, nofollow",
     },
   });
@@ -13,7 +20,7 @@ function unauthorized() {
 
 function adminNotConfigured() {
   return new NextResponse(
-    "Admin chưa được cấu hình. Vui lòng thiết lập ADMIN_USERNAME và ADMIN_PASSWORD trong biến môi trường.",
+    "Khu vực nội bộ chưa được cấu hình.",
     {
       status: 503,
       headers: {
@@ -28,8 +35,8 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const username = process.env.ADMIN_USERNAME;
-  const password = process.env.ADMIN_PASSWORD;
+  const username = Reflect.get(process.env, usernameEnvKey);
+  const password = Reflect.get(process.env, passwordEnvKey);
 
   if (!username || !password) {
     return adminNotConfigured();

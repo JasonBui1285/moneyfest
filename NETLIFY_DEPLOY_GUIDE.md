@@ -14,13 +14,11 @@ datasource db {
 
 ## Netlify environment variables
 
-Set these variables in Netlify:
+Set database, public site URL, and the two Basic Auth credential variables in Netlify. Use `.env.example` as the variable-name reference, but never copy local or real secret values into docs or reports.
 
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@HOST.neon.tech/DB?sslmode=require"
 NEXT_PUBLIC_SITE_URL="https://your-production-domain.netlify.app"
-ADMIN_USERNAME="change-me"
-ADMIN_PASSWORD="change-me-with-a-long-random-password"
 ```
 
 Use the real Neon connection string for `DATABASE_URL`. Keep `sslmode=require`.

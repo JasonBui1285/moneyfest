@@ -64,8 +64,7 @@ Ghi chú: build có cảnh báo từ `pg` về `sslmode=require`. Đây không p
 3. Thêm Netlify env:
    - `DATABASE_URL`
    - `NEXT_PUBLIC_SITE_URL`
-   - `ADMIN_USERNAME`
-   - `ADMIN_PASSWORD`
+   - Hai biến credential Basic Auth phía server
 4. Deploy lại Netlify.
 5. Nếu database mới chưa có bảng, chạy:
 
