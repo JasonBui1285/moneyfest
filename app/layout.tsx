@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
+import { Analytics } from "@/components/analytics";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.moneyfest.vn"),
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: "MONEYFEST - Hiểu luật chơi, làm chủ cuộc đời",
+    default: siteConfig.title,
     template: "%s | MONEYFEST",
   },
-  description:
-    "MONEYFEST giúp bạn hiểu tiền, hiểu bản thân và hiểu thế giới để ra quyết định tài chính bình tĩnh hơn.",
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "MONEYFEST - Hiểu luật chơi, làm chủ cuộc đời",
+    type: "website",
+    locale: siteConfig.locale,
+    url: "/",
+    siteName: siteConfig.name,
+    title: siteConfig.title,
     description:
       "Hệ sinh thái tri thức và tư vấn tài chính giúp bạn có nhiều lựa chọn hơn trong cuộc sống.",
     images: ["/brand/logo/moneyfest-og.png"],
@@ -27,6 +34,7 @@ export const metadata: Metadata = {
     apple: "/icon.png",
   },
   manifest: "/manifest.webmanifest",
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -34,12 +42,39 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: siteConfig.name,
+      url: siteConfig.url,
+      logo: absoluteUrl("/brand/logo/moneyfest-logo-horizontal.png"),
+      description: siteConfig.description,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: siteConfig.name,
+      url: siteConfig.url,
+      inLanguage: "vi-VN",
+    },
+  ];
+
   return (
     <html
       lang="vi"
       className="h-full antialiased"
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

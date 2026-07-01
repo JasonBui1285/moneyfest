@@ -3,6 +3,7 @@ import { PageShell } from "@/components/site-shell";
 
 export const metadata: Metadata = {
   title: "Disclaimer",
+  alternates: { canonical: "/disclaimer" },
   description: "Tuyên bố miễn trừ trách nhiệm cho nội dung tài chính trên MONEYFEST.",
 };
 

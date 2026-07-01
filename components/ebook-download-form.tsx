@@ -7,6 +7,7 @@ import { Download } from "lucide-react";
 import Link from "next/link";
 import { submitEbookDownload } from "@/lib/actions";
 import { ebookDownloadSchema } from "@/lib/validation";
+import { trackEvent } from "@/lib/analytics";
 import type { z } from "zod";
 
 type FormValues = z.infer<typeof ebookDownloadSchema>;
@@ -27,7 +28,14 @@ export function EbookDownloadForm({ ebookSlug }: { ebookSlug: string }) {
       const result = await submitEbookDownload(values);
       setMessage(result.message);
       if (result.downloadUrl) setDownloadUrl(result.downloadUrl);
-      if (result.ok) form.reset({ ebookSlug, name: "", email: "", phone: "", consentGiven: false, company: "" });
+      if (result.ok) {
+        trackEvent("generate_lead", {
+          form_name: "ebook_download",
+          lead_source: "ebook_download",
+          ebook_slug: ebookSlug,
+        });
+        form.reset({ ebookSlug, name: "", email: "", phone: "", consentGiven: false, company: "" });
+      }
     });
   }
 

@@ -7,6 +7,7 @@ import { Send } from "lucide-react";
 import Link from "next/link";
 import { submitConsultation } from "@/lib/actions";
 import { consultationSchema } from "@/lib/validation";
+import { trackEvent } from "@/lib/analytics";
 import type { z } from "zod";
 
 type FormValues = z.infer<typeof consultationSchema>;
@@ -32,7 +33,13 @@ export function ConsultationForm() {
     startTransition(async () => {
       const result = await submitConsultation(values);
       setMessage(result.message);
-      if (result.ok) form.reset();
+      if (result.ok) {
+        trackEvent("generate_lead", {
+          form_name: "consultation",
+          lead_source: "consultation",
+        });
+        form.reset();
+      }
     });
   }
 

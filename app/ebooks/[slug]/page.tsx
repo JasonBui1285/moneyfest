@@ -16,6 +16,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: ebook.title,
     description: ebook.subtitle,
+    alternates: { canonical: `/ebooks/${ebook.slug}` },
+    openGraph: {
+      type: "website",
+      url: `/ebooks/${ebook.slug}`,
+      title: ebook.title,
+      description: ebook.subtitle,
+    },
   };
 }
 

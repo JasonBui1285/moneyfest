@@ -3,6 +3,7 @@ import { PageShell } from "@/components/site-shell";
 
 export const metadata: Metadata = {
   title: "Điều khoản sử dụng",
+  alternates: { canonical: "/terms" },
   description: "Điều khoản sử dụng website và nội dung MONEYFEST.",
 };
 

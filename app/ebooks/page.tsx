@@ -6,6 +6,7 @@ import { getEbooks } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Ebook miễn phí",
+  alternates: { canonical: "/ebooks" },
   description: "Thư viện ebook miễn phí của MONEYFEST về dòng tiền, bảo vệ tài chính và quyết định đầu tư.",
 };
 

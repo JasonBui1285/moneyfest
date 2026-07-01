@@ -7,6 +7,7 @@ import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Blog",
+  alternates: { canonical: "/blog" },
   description: "Bài viết MONEYFEST về dòng tiền, bảo vệ tài chính, đầu tư và tư duy ra quyết định.",
 };
 

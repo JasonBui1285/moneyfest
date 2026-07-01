@@ -4,6 +4,7 @@ import { SafeBlogContent } from "@/components/safe-blog-content";
 import { PageShell } from "@/components/site-shell";
 import { getPostBySlug } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
+import { absoluteUrl } from "@/lib/site";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -16,6 +17,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: post.title,
     description: post.excerpt,
+    alternates: { canonical: `/blog/${post.slug}` },
+    openGraph: {
+      type: "article",
+      url: `/blog/${post.slug}`,
+      title: post.title,
+      description: post.excerpt,
+      publishedTime: post.publishedAt.toISOString(),
+      modifiedTime: post.updatedAt.toISOString(),
+    },
   };
 }
 
@@ -23,10 +33,34 @@ export default async function BlogDetailPage({ params }: Props) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) notFound();
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.publishedAt.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
+    mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
+    author: { "@type": "Organization", name: "MONEYFEST" },
+    publisher: {
+      "@type": "Organization",
+      name: "MONEYFEST",
+      logo: {
+        "@type": "ImageObject",
+        url: absoluteUrl("/brand/logo/moneyfest-logo-horizontal.png"),
+      },
+    },
+  };
 
   return (
     <PageShell>
       <article className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(articleJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
         <p className="mf-eyebrow">
           {post.category.name} / {formatDate(post.publishedAt)} / {post.readTime} phút đọc
         </p>

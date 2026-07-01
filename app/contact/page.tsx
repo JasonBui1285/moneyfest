@@ -5,6 +5,7 @@ import { SectionHeader } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Đăng ký tư vấn",
+  alternates: { canonical: "/contact" },
   description: "Đăng ký tư vấn 1:1 với MONEYFEST về dòng tiền, bảo vệ tài chính và mục tiêu dài hạn.",
 };
 

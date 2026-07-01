@@ -5,6 +5,7 @@ import { SectionHeader } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Công cụ miễn phí",
+  alternates: { canonical: "/tools" },
   description: "Tính dòng tiền cá nhân và làm quiz sức khỏe tài chính cùng MONEYFEST.",
 };
 

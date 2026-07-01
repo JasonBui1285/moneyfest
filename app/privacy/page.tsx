@@ -3,6 +3,7 @@ import { PageShell } from "@/components/site-shell";
 
 export const metadata: Metadata = {
   title: "Chính sách bảo mật",
+  alternates: { canonical: "/privacy" },
   description: "Cách MONEYFEST thu thập, sử dụng và bảo vệ thông tin cá nhân trong Phase 1.",
 };
 

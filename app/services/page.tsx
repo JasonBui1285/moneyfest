@@ -6,6 +6,7 @@ import { services } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Dịch vụ",
+  alternates: { canonical: "/services" },
   description: "Ebook trả phí, tư vấn 1:1, membership sắp ra mắt và dashboard tài chính sắp ra mắt của MONEYFEST.",
 };
 
