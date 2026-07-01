@@ -39,6 +39,8 @@ DATABASE_URL="postgresql://USER:PASSWORD@HOST.neon.tech/DB?sslmode=require"
 
 Khi chạy local, tạo database PostgreSQL/Neon hoặc dùng một PostgreSQL local, sau đó đặt `DATABASE_URL` trong `.env`. Không hard-code database URL trong source code.
 
+Xem [ENVIRONMENT_GUIDE.md](./ENVIRONMENT_GUIDE.md) để phân loại biến public, server config và server secret. `NEXT_PUBLIC_SITE_URL` là biến public của Next.js, không phải secret.
+
 ## Quản Trị
 
 Route `/admin` được bảo vệ bằng Basic Auth phía server. Cấu hình credential theo `.env.example` và không commit giá trị thật vào repository.

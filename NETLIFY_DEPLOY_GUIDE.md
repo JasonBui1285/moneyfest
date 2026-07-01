@@ -16,6 +16,8 @@ datasource db {
 
 Set database, public site URL, and the two Basic Auth credential variables in Netlify. Use `.env.example` as the variable-name reference, but never copy local or real secret values into docs or reports.
 
+`NEXT_PUBLIC_SITE_URL` is public by design in Next.js. It should be configured as a normal environment variable, not as a secret-scanning value.
+
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@HOST.neon.tech/DB?sslmode=require"
 NEXT_PUBLIC_SITE_URL="https://your-production-domain.netlify.app"
