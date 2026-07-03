@@ -4,6 +4,7 @@ import { AdminCard, AdminPageHeader, AdminTableShell, Pagination, SearchFilterBa
 import { grantEbookAccessAction, updateUserAccountTypeAction } from "@/lib/admin-actions";
 import { getAdminUsers } from "@/lib/admin-data";
 import { parsePage, parsePageSize, parseSearch } from "@/lib/admin-utils";
+import { roleLabels, userRoles } from "@/lib/rbac";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -55,8 +56,19 @@ export default async function AdminUsersPage({ searchParams }: Props) {
                         <option value="MEMBER">MEMBER</option>
                         <option value="ADMIN">ADMIN</option>
                       </select>
+                      <select
+                        name="role"
+                        defaultValue={user.role.toUpperCase()}
+                        className="w-full rounded-[var(--mf-radius-sm)] border border-[var(--mf-border)] bg-white px-3 py-2 text-sm"
+                      >
+                        {userRoles.map((role) => (
+                          <option key={role} value={role}>
+                            {roleLabels[role]}
+                          </option>
+                        ))}
+                      </select>
                     </AdminActionForm>
-                    <p className="mf-muted mt-2 text-xs">Role: {user.role}</p>
+                    <p className="mf-muted mt-2 text-xs">Role: {user.role.toUpperCase()}</p>
                     <p className="mf-muted text-xs">Session: {user._count.sessions}</p>
                   </td>
                   <td className="min-w-[220px]">

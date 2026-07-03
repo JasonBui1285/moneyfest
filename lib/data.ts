@@ -65,7 +65,7 @@ export async function getHomeData(): Promise<{
   const [ebooks, posts] = await Promise.all([
     safeQuery<Ebook[]>(
       prisma.ebook.findMany({
-        where: { isFeatured: true },
+        where: { isFeatured: true, deletedAt: null },
         orderBy: { createdAt: "desc" },
         take: 3,
       }),
@@ -73,7 +73,7 @@ export async function getHomeData(): Promise<{
     ),
     safeQuery<PostWithRelations[]>(
       prisma.post.findMany({
-        where: { isFeatured: true },
+        where: { isFeatured: true, deletedAt: null },
         include: { category: true, tags: true },
         orderBy: { publishedAt: "desc" },
         take: 3,
@@ -88,6 +88,7 @@ export async function getHomeData(): Promise<{
 export async function getEbooks(): Promise<Ebook[]> {
   return safeQuery<Ebook[]>(
     prisma.ebook.findMany({
+      where: { deletedAt: null },
       orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
     }),
     [],
@@ -96,8 +97,8 @@ export async function getEbooks(): Promise<Ebook[]> {
 
 export async function getEbookBySlug(slug: string): Promise<EbookWithDownloadCount | null> {
   return safeQuery<EbookWithDownloadCount | null>(
-    prisma.ebook.findUnique({
-      where: { slug },
+    prisma.ebook.findFirst({
+      where: { slug, deletedAt: null },
       include: { _count: { select: { downloads: true } } },
     }),
     null,
@@ -107,6 +108,7 @@ export async function getEbookBySlug(slug: string): Promise<EbookWithDownloadCou
 export async function getPosts(): Promise<PostWithRelations[]> {
   return safeQuery<PostWithRelations[]>(
     prisma.post.findMany({
+      where: { deletedAt: null },
       include: { category: true, tags: true },
       orderBy: { publishedAt: "desc" },
     }),
@@ -116,8 +118,8 @@ export async function getPosts(): Promise<PostWithRelations[]> {
 
 export async function getPostBySlug(slug: string): Promise<PostWithRelations | null> {
   return safeQuery<PostWithRelations | null>(
-    prisma.post.findUnique({
-      where: { slug },
+    prisma.post.findFirst({
+      where: { slug, deletedAt: null },
       include: { category: true, tags: true },
     }),
     null,
@@ -145,17 +147,18 @@ export async function getAdminData(): Promise<AdminDashboardData> {
       downloads,
       consultations,
     ] = await Promise.all([
-      prisma.lead.count(),
+      prisma.lead.count({ where: { deletedAt: null } }),
       prisma.ebookDownload.count(),
-      prisma.post.count(),
-      prisma.consultationRequest.count(),
-      prisma.lead.findMany({ orderBy: { createdAt: "desc" }, take: 8 }),
+      prisma.post.count({ where: { deletedAt: null } }),
+      prisma.consultationRequest.count({ where: { deletedAt: null } }),
+      prisma.lead.findMany({ where: { deletedAt: null }, orderBy: { createdAt: "desc" }, take: 8 }),
       prisma.ebookDownload.findMany({
         include: { lead: true, ebook: true },
         orderBy: { createdAt: "desc" },
         take: 8,
       }),
       prisma.consultationRequest.findMany({
+        where: { deletedAt: null },
         orderBy: { createdAt: "desc" },
         take: 8,
       }),

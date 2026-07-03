@@ -2,8 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { writeAuditLog } from "@/lib/audit";
 import { getEbookAccessState, type EbookDownloadActionState } from "@/lib/ebook-access";
 import { requireUser, safeCallbackPath, type CurrentUser } from "@/lib/auth";
+import { rateLimit, rateLimitMessage, requestIdentity } from "@/lib/rate-limit";
 
 async function findOrCreateUserLead(user: CurrentUser) {
   const existing = await prisma.lead.findFirst({ where: { email: user.email } });
@@ -35,6 +37,13 @@ export async function downloadEbookForCurrentUser(
 
   const callbackUrl = safeCallbackPath(`/ebooks/${slug}`);
   const user = await requireUser(callbackUrl);
+  const identity = await requestIdentity(user.email);
+  const limited = rateLimit({
+    key: `account-ebook-download:${identity}:${user.id}:${slug}`,
+    limit: 10,
+    windowMs: 10 * 60 * 1000,
+  });
+  if (!limited.ok) return { ok: false, message: rateLimitMessage(limited) };
   const ebook = await prisma.ebook.findUnique({ where: { slug } });
   if (!ebook) return { ok: false, message: "Không tìm thấy ebook này." };
 
@@ -49,6 +58,14 @@ export async function downloadEbookForCurrentUser(
       leadId: lead.id,
       ebookId: ebook.id,
     },
+  });
+  await writeAuditLog({
+    actorId: user.id,
+    actorEmail: user.email,
+    action: "ebook.download_granted",
+    entity: "Ebook",
+    entityId: ebook.id,
+    metadata: { slug: ebook.slug, accessLevel: ebook.accessLevel },
   });
   revalidatePath("/admin");
   revalidatePath("/account");

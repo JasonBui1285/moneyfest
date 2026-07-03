@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { writeAuditLog } from "@/lib/audit";
 import { runLeadAutomation } from "@/lib/brevo";
+import { rateLimit, rateLimitMessage, requestIdentity } from "@/lib/rate-limit";
 import {
   cashflowSchema,
   consultationSchema,
@@ -79,6 +81,13 @@ export async function submitEbookDownload(data: unknown): Promise<ActionState> {
   if (!parsed.success) {
     return { ok: false, message: "Thông tin chưa hợp lệ. Vui lòng kiểm tra lại." };
   }
+  const ebookIdentity = await requestIdentity(parsed.data.email);
+  const ebookLimit = rateLimit({
+    key: `ebook-download:${ebookIdentity}:${parsed.data.email}:${parsed.data.ebookSlug}`,
+    limit: 5,
+    windowMs: 10 * 60 * 1000,
+  });
+  if (!ebookLimit.ok) return { ok: false, message: rateLimitMessage(ebookLimit) };
 
   const ebook = await prisma.ebook.findUnique({
     where: { slug: parsed.data.ebookSlug },
@@ -111,6 +120,13 @@ export async function submitEbookDownload(data: unknown): Promise<ActionState> {
       },
     }),
   ]);
+  await writeAuditLog({
+    actorEmail: parsed.data.email,
+    action: "ebook.download_requested",
+    entity: "Ebook",
+    entityId: ebook.id,
+    metadata: { slug: ebook.slug },
+  });
 
   safeRevalidate("/admin");
   await runLeadAutomation({
@@ -144,6 +160,13 @@ export async function submitConsultation(data: unknown): Promise<ActionState> {
   if (!parsed.success) {
     return { ok: false, message: "Thông tin chưa hợp lệ. Vui lòng kiểm tra lại." };
   }
+  const consultationIdentity = await requestIdentity(parsed.data.email);
+  const consultationLimit = rateLimit({
+    key: `consultation:${consultationIdentity}:${parsed.data.email}`,
+    limit: 3,
+    windowMs: 30 * 60 * 1000,
+  });
+  if (!consultationLimit.ok) return { ok: false, message: rateLimitMessage(consultationLimit) };
 
   const lead = await findOrCreateLead({
     name: parsed.data.name,
@@ -191,6 +214,12 @@ export async function submitConsultation(data: unknown): Promise<ActionState> {
       },
     }),
   ]);
+  await writeAuditLog({
+    actorEmail: parsed.data.email,
+    action: "consultation.requested",
+    entity: "ConsultationRequest",
+    metadata: { financialGoal: parsed.data.financialGoal },
+  });
 
   safeRevalidate("/admin");
   await runLeadAutomation({

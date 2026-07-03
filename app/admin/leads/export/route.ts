@@ -10,6 +10,7 @@ export async function GET(request: Request) {
   const status = url.searchParams.get("status")?.trim();
   const leads = await prisma.lead.findMany({
     where: {
+      deletedAt: null,
       ...(status ? { status } : {}),
       ...(q
         ? {

@@ -17,6 +17,7 @@ model Lead {
   assignedTo  String?
   consentGiven Boolean          @default(false)
   consentAt    DateTime?
+  deletedAt   DateTime?
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   downloads   EbookDownload[]
@@ -26,6 +27,7 @@ model Lead {
   @@index([email])
   @@index([status])
   @@index([createdAt])
+  @@index([deletedAt])
 }
 
 model Ebook {
@@ -44,6 +46,7 @@ model Ebook {
   price       Int?
   isFree      Boolean         @default(true)
   isFeatured  Boolean         @default(false)
+  deletedAt   DateTime?
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   downloads   EbookDownload[]
@@ -51,6 +54,7 @@ model Ebook {
 
   @@index([accessLevel])
   @@index([status])
+  @@index([deletedAt])
 }
 
 model EbookDownload {
@@ -79,6 +83,7 @@ model Post {
   seoDescription String?
   isFeatured  Boolean   @default(false)
   publishedAt DateTime  @default(now())
+  deletedAt   DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   categoryId  String
@@ -87,6 +92,7 @@ model Post {
 
   @@index([publishedAt])
   @@index([categoryId])
+  @@index([deletedAt])
 }
 
 model Category {
@@ -118,11 +124,13 @@ model ConsultationRequest {
   consentGiven  Boolean  @default(false)
   consentAt     DateTime?
   status        String   @default("new")
+  deletedAt     DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   @@index([createdAt])
   @@index([email])
+  @@index([deletedAt])
 }
 
 model ToolResult {
@@ -133,11 +141,13 @@ model ToolResult {
   score     Int?
   result    String
   payload   String
+  deletedAt DateTime?
   createdAt DateTime @default(now())
   lead      Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
   @@index([toolType])
   @@index([createdAt])
+  @@index([deletedAt])
 }
 
 model FormSubmission {
@@ -145,11 +155,13 @@ model FormSubmission {
   formType  String
   leadId    String?
   payload   String
+  deletedAt DateTime?
   createdAt DateTime @default(now())
   lead      Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
   @@index([formType])
   @@index([createdAt])
+  @@index([deletedAt])
 }
 
 model Setting {
@@ -237,4 +249,21 @@ model EbookAccess {
   @@unique([userId, ebookId])
   @@index([accessType])
   @@index([expiresAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actorEmail String?
+  action     String
+  entity     String
+  entityId   String?
+  metadata   String?
+  createdAt  DateTime @default(now())
+
+  @@index([actorId])
+  @@index([actorEmail])
+  @@index([action])
+  @@index([entity])
+  @@index([createdAt])
 }

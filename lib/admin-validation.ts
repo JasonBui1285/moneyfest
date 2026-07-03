@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { consultationStatuses, leadStatuses } from "@/lib/admin-constants";
 import { slugify } from "@/lib/admin-utils";
+import { accountTypes, userRoles } from "@/lib/rbac";
 
 const idSchema = z.string().min(1);
 const optionalText = z.string().trim().optional();
@@ -93,7 +94,8 @@ export const settingSaveSchema = z.object({
 
 export const userAccountTypeUpdateSchema = z.object({
   id: idSchema,
-  accountType: z.enum(["FREE", "PAID", "MEMBER", "ADMIN"]),
+  accountType: z.enum(accountTypes),
+  role: z.enum(userRoles),
 });
 
 export const ebookAccessGrantSchema = z.object({

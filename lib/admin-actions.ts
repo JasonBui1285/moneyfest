@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { writeAuditLog } from "@/lib/audit";
 import {
   categorySaveSchema,
   consultationUpdateSchema,
@@ -65,10 +66,14 @@ export async function deleteEbookAction(_state: AdminActionResult, formData: For
   const parsed = idOnlySchema.safeParse(formToRecord(formData));
   if (!parsed.success) return adminError();
   try {
-    await prisma.ebook.delete({ where: { id: parsed.data.id } });
+    await prisma.ebook.update({
+      where: { id: parsed.data.id },
+      data: { deletedAt: new Date(), status: "archived", isFeatured: false },
+    });
   } catch {
     await prisma.ebook.update({ where: { id: parsed.data.id }, data: { isFeatured: false, isFree: false } });
   }
+  await writeAuditLog({ action: "admin.ebook_soft_delete", entity: "Ebook", entityId: parsed.data.id });
   refresh(["/admin", "/admin/ebooks", "/ebooks"]);
   return { ok: true, message: "Đã xóa hoặc archive ebook." };
 }
@@ -90,7 +95,8 @@ export async function savePostAction(_state: AdminActionResult, formData: FormDa
 export async function deletePostAction(_state: AdminActionResult, formData: FormData): Promise<AdminActionResult> {
   const parsed = idOnlySchema.safeParse(formToRecord(formData));
   if (!parsed.success) return adminError();
-  await prisma.post.delete({ where: { id: parsed.data.id } });
+  await prisma.post.update({ where: { id: parsed.data.id }, data: { deletedAt: new Date(), status: "archived", isFeatured: false } });
+  await writeAuditLog({ action: "admin.post_soft_delete", entity: "Post", entityId: parsed.data.id });
   refresh(["/admin", "/admin/posts", "/blog", "/sitemap.xml"]);
   return { ok: true, message: "Đã xóa bài viết." };
 }
@@ -185,8 +191,14 @@ export async function updateUserAccountTypeAction(
     where: { id: parsed.data.id },
     data: {
       accountType: parsed.data.accountType,
-      role: parsed.data.accountType === "ADMIN" ? "ADMIN" : "USER",
+      role: parsed.data.role,
     },
+  });
+  await writeAuditLog({
+    action: "admin.user_account_type_update",
+    entity: "User",
+    entityId: parsed.data.id,
+    metadata: { accountType: parsed.data.accountType, role: parsed.data.role },
   });
   refresh(["/admin", "/admin/users"]);
   return { ok: true, message: "Đã cập nhật loại tài khoản." };
@@ -206,6 +218,12 @@ export async function grantEbookAccessAction(
       ebookId: parsed.data.ebookId,
       accessType: parsed.data.accessType,
     },
+  });
+  await writeAuditLog({
+    action: "admin.ebook_access_grant",
+    entity: "EbookAccess",
+    entityId: parsed.data.ebookId,
+    metadata: { userId: parsed.data.userId, accessType: parsed.data.accessType },
   });
   refresh(["/admin/users"]);
   return { ok: true, message: "Đã cấp quyền ebook." };

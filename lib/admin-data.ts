@@ -40,29 +40,31 @@ export async function getAdminDashboardData() {
     topEbooks,
     recentPosts,
   ] = await Promise.all([
-    prisma.lead.count(),
-    prisma.lead.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
+    prisma.lead.count({ where: { deletedAt: null } }),
+    prisma.lead.count({ where: { deletedAt: null, createdAt: { gte: sevenDaysAgo } } }),
     prisma.ebookDownload.count(),
-    prisma.consultationRequest.count(),
-    prisma.post.count(),
+    prisma.consultationRequest.count({ where: { deletedAt: null } }),
+    prisma.post.count({ where: { deletedAt: null } }),
     prisma.user.count(),
-    prisma.lead.findMany({ orderBy: { createdAt: "desc" }, take: 6 }),
+    prisma.lead.findMany({ where: { deletedAt: null }, orderBy: { createdAt: "desc" }, take: 6 }),
     prisma.ebookDownload.findMany({
       include: { lead: true, ebook: true },
       orderBy: { createdAt: "desc" },
       take: 6,
     }),
     prisma.consultationRequest.findMany({
-      where: { status: { in: ["new", "contacted", "scheduled"] } },
+      where: { status: { in: ["new", "contacted", "scheduled"] }, deletedAt: null },
       orderBy: { createdAt: "desc" },
       take: 6,
     }),
     prisma.ebook.findMany({
+      where: { deletedAt: null },
       include: { _count: { select: { downloads: true } } },
       orderBy: { downloads: { _count: "desc" } },
       take: 5,
     }),
     prisma.post.findMany({
+      where: { deletedAt: null },
       include: { category: true },
       orderBy: { updatedAt: "desc" },
       take: 5,
@@ -88,6 +90,7 @@ export async function getAdminLeads(params: AdminListParams) {
   const { page, pageSize, skip, take } = pagination(params);
   const search = params.q?.trim();
   const where: Prisma.LeadWhereInput = {
+    deletedAt: null,
     ...(params.status ? { status: params.status } : {}),
     ...(search
       ? {
@@ -111,6 +114,7 @@ export async function getAdminEbooks(params: AdminListParams) {
   const search = params.q?.trim();
   const where: Prisma.EbookWhereInput = search
     ? {
+        deletedAt: null,
         OR: [
           { title: { contains: search, mode: "insensitive" } },
           { slug: { contains: search, mode: "insensitive" } },
@@ -118,6 +122,7 @@ export async function getAdminEbooks(params: AdminListParams) {
         ],
       }
     : {};
+  if (!search) where.deletedAt = null;
   const [items, total] = await Promise.all([
     prisma.ebook.findMany({ where, orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }], skip, take }),
     prisma.ebook.count({ where }),
@@ -130,6 +135,7 @@ export async function getAdminPosts(params: AdminListParams) {
   const search = params.q?.trim();
   const where: Prisma.PostWhereInput = search
     ? {
+        deletedAt: null,
         OR: [
           { title: { contains: search, mode: "insensitive" } },
           { slug: { contains: search, mode: "insensitive" } },
@@ -137,6 +143,7 @@ export async function getAdminPosts(params: AdminListParams) {
         ],
       }
     : {};
+  if (!search) where.deletedAt = null;
   const [items, total, categories, tags] = await Promise.all([
     prisma.post.findMany({
       where,
@@ -182,6 +189,7 @@ export async function getAdminConsultations(params: AdminListParams) {
   const { page, pageSize, skip, take } = pagination(params);
   const search = params.q?.trim();
   const where: Prisma.ConsultationRequestWhereInput = {
+    deletedAt: null,
     ...(params.status ? { status: params.status } : {}),
     ...(search
       ? {
@@ -205,6 +213,7 @@ export async function getAdminConsultations(params: AdminListParams) {
 export async function getAdminToolResults(params: AdminListParams) {
   const { page, pageSize, skip, take } = pagination(params);
   const where: Prisma.ToolResultWhereInput = {
+    deletedAt: null,
     ...(params.toolType ? { toolType: params.toolType } : {}),
     ...(params.q
       ? {
@@ -218,7 +227,12 @@ export async function getAdminToolResults(params: AdminListParams) {
   const [items, total, toolTypes] = await Promise.all([
     prisma.toolResult.findMany({ where, include: { lead: true }, orderBy: { createdAt: "desc" }, skip, take }),
     prisma.toolResult.count({ where }),
-    prisma.toolResult.findMany({ distinct: ["toolType"], select: { toolType: true }, orderBy: { toolType: "asc" } }),
+    prisma.toolResult.findMany({
+      where: { deletedAt: null },
+      distinct: ["toolType"],
+      select: { toolType: true },
+      orderBy: { toolType: "asc" },
+    }),
   ]);
   return { items, toolTypes: toolTypes.map((item) => item.toolType), meta: paginationMeta(total, page, pageSize) };
 }
