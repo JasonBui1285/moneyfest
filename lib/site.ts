@@ -1,4 +1,4 @@
-const DEFAULT_SITE_URL = "https://moneyfest-website.netlify.app";
+const DEFAULT_SITE_URL = "https://moneyfest.vn";
 
 export const siteUrl = (
   process.env.NEXT_PUBLIC_SITE_URL?.trim() || DEFAULT_SITE_URL
@@ -16,3 +16,4 @@ export const siteConfig = {
 export function absoluteUrl(path = "/") {
   return new URL(path, `${siteUrl}/`).toString();
 }
+

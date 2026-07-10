@@ -28,6 +28,7 @@
   --mf-obsidian: #070707;
   --mf-midnight: #071521;
   --mf-gold: #d4a83f;
+  --border-gold: rgba(212,168,63,0.5);
   --mf-champagne: #e8cf8b;
   --mf-ivory: #f4f0e8;
   --mf-slate: #66717a;
@@ -73,6 +74,18 @@ body {
   font-family: var(--mf-font-body);
   font-size: 16px;
   line-height: 1.6;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(212, 168, 63, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 168, 63, 0.035) 1px, transparent 1px);
+  background-size: 52px 52px;
 }
 
 button,
@@ -146,6 +159,16 @@ button {
   color: var(--mf-ivory);
 }
 
+.mf-editorial-card {
+  background:
+    linear-gradient(135deg, rgba(212, 168, 63, 0.12), transparent 36%),
+    var(--mf-midnight);
+  border: 1px solid rgba(212, 168, 63, 0.38);
+  border-radius: var(--mf-radius-lg);
+  box-shadow: 0 22px 60px rgba(7, 7, 7, 0.18);
+  color: var(--mf-ivory);
+}
+
 .mf-btn {
   min-height: 44px;
   display: inline-flex;
@@ -184,6 +207,17 @@ button {
 .mf-btn-secondary:hover {
   background: var(--mf-white);
   border-color: var(--mf-gold);
+}
+
+.mf-btn-outline {
+  background: rgba(7, 7, 7, 0.18);
+  border: 1px solid rgba(212, 168, 63, 0.62);
+  color: var(--mf-ivory);
+}
+
+.mf-btn-outline:hover {
+  background: rgba(212, 168, 63, 0.12);
+  color: var(--mf-champagne);
 }
 
 .mf-btn-gold {
@@ -256,6 +290,49 @@ button {
   padding: 0.28rem 0.68rem;
   font-size: 0.75rem;
   font-weight: 800;
+}
+
+.mf-dark-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(212, 168, 63, 0.38);
+  border-radius: var(--mf-radius-sm);
+  background: rgba(7, 21, 33, 0.68);
+  color: rgba(244, 240, 232, 0.86);
+  padding: 0.65rem 0.9rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.mf-tag-dark {
+  display: inline-flex;
+  width: fit-content;
+  border: 1px solid rgba(212, 168, 63, 0.52);
+  border-radius: var(--mf-radius-sm);
+  background: rgba(7, 7, 7, 0.72);
+  color: var(--mf-gold);
+  padding: 0.28rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mf-cream-section {
+  background: linear-gradient(180deg, var(--mf-ivory), #fffaf0);
+}
+
+.mf-dark-section {
+  background:
+    radial-gradient(circle at top right, rgba(212, 168, 63, 0.16), transparent 30rem),
+    var(--mf-midnight);
+  color: var(--mf-ivory);
+}
+
+.mf-soft-divider {
+  border-top: 1px solid rgba(212, 168, 63, 0.24);
+  border-bottom: 1px solid rgba(212, 168, 63, 0.24);
 }
 
 .mf-tag {
